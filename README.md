@@ -1,4 +1,4 @@
 maintainers
 ===========
 
-Simple tool that analyzes the maintainers file of Linux kernel
+Simple tools that analyze the maintainers file of Linux kernel
