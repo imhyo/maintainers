@@ -7,7 +7,9 @@ class SubSystemInfo:
 	def printInfoItem(self, *keys):
 		for key in keys:
 			if self.info.has_key(key):
-				print self.info[key] + '\t',
+				print self.info[key] + '\t ',
+			else:
+				print '\t ',
 
 	def printInfo(self):
 		self.printInfoItem('!', 'M', 'L', 'W', 'Q', 'T', 'S', 'F')
