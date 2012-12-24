@@ -42,21 +42,25 @@ class SubSystemInfo:
 			self.info['t'] += ', ' + t
 		
 	def checkType(self, line):
-		if line[0] == 'F':
+		if line[1] != ':':
+			if line[:-1].rfind('DRIVER') >= 0 or line[:-1].rfind('DRIVERS') >= 0:
+				self.setType('Driver')
+		elif line[0] == 'F':
 			if line.find('drivers/') >= 0:
 				self.setType('Driver')
 			elif line.find('arch/') >= 0:
 				self.setType('Arch')
 
 	def processTitle(self, line):
+		self.checkType(line)
 		self.info['!'] = line[:-1]
 
 	def processInfo(self, line):
+		self.checkType(line)
 		if self.info.has_key(line[0]):
 			self.info[line[0]] += ", " + line[3:-1]
 		else:
 			self.info[line[0]] = line[3:-1]
-		self.checkType(line)
 
 	def processLine(self, line):
 		if len(line) < 2:	# Empty Line
