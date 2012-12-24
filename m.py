@@ -4,19 +4,49 @@ import sys
 class SubSystemInfo:
 	info = {}
 	isBeginning = True
+	labels = (('!', 'Name'), \
+		('M', 'Maintainers'), \
+		('L', 'Mailing List'), \
+		('W', 'Web Page'), \
+		('Q', 'Patchwork Site'), \
+		('T', 'SCM Type/Location'), \
+		('S', 'Status'), \
+		('F', 'Files'), \
+		('X', 'Files not Maintained'), \
+		('K', 'Perl Matching Keyword'), \
+		('t', 'Type'))
 
-	def printInfoItem(self, *keys):
-		for key in keys:
-			if self.info.has_key(key):
-				print self.info[key] + '\t ',
+	
+	def printLabels(self):
+		for e in self.labels:
+			print e[1] + '\t',
+		print
+
+	def printInfoItem(self):
+		for e in self.labels:
+			if self.info.has_key(e[0]):
+				print self.info[e[0]] + '\t',
 			else:
-				print '\t ',
+				print '\t',
 
 	def printInfo(self):
-		self.printInfoItem('!', 'M', 'L', 'W', 'Q', 'T', 'S', 'F')
+		self.printInfoItem()
 		print
 
 		self.info.clear()
+
+	def setType(self, t):
+		if not self.info.has_key('t'):
+			self.info['t'] = t
+		elif self.info['t'].find(t) < 0:
+			self.info['t'] += ', ' + t
+		
+	def checkType(self, line):
+		if line[0] == 'F':
+			if line.find('drivers/') >= 0:
+				self.setType('Driver')
+			elif line.find('arch/') >= 0:
+				self.setType('Arch')
 
 	def processTitle(self, line):
 		self.info['!'] = line[:-1]
@@ -26,6 +56,7 @@ class SubSystemInfo:
 			self.info[line[0]] += ", " + line[3:-1]
 		else:
 			self.info[line[0]] = line[3:-1]
+		self.checkType(line)
 
 	def processLine(self, line):
 		if len(line) < 2:	# Empty Line
@@ -58,6 +89,7 @@ def main():
 		exit()
 
 	skipHeader(f)
+	subSystemInfo.printLabels()
 
 	for line in f:
 		subSystemInfo.processLine(line)
