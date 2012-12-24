@@ -3,6 +3,7 @@ import sys
 
 class SubSystemInfo:
 	info = {}
+	isBeginning = True
 
 	def printInfoItem(self, *keys):
 		for key in keys:
@@ -28,7 +29,10 @@ class SubSystemInfo:
 
 	def processLine(self, line):
 		if len(line) < 2:	# Empty Line
-			self.printInfo()
+			if self.isBeginning:
+				self.isBeginning = False
+			else:
+				self.printInfo()
 		elif line[1] != ':':	# SubSystem Tile Line
 			self.processTitle(line)
 		else:
@@ -38,11 +42,22 @@ class SubSystemInfo:
 def getMaintainersFileName():
 	if len(sys.argv) >= 2:
 		return sys.argv[1]
-	return 'Maintainers'
+	return 'MAINTAINERS'
+
+def skipHeader(f):
+	for line in f:
+		if line.find('---') >= 0:
+			break
 
 def main():
 	subSystemInfo = SubSystemInfo()
-	f = open(getMaintainersFileName())
+	try:
+		f = open(getMaintainersFileName())
+	except IOError:
+		print 'Cannot open the file' 
+		exit()
+
+	skipHeader(f)
 
 	for line in f:
 		subSystemInfo.processLine(line)
